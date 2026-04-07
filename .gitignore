@@ -1,0 +1,37 @@
+# --- Python / Django ---
+venv/
+*.pyc
+__pycache__/
+db.sqlite3
+backend/.env
+.env
+# Ignore migrations if you want a fresh DB on Render
+# lockers/migrations/00*.py 
+
+# --- Node / Expo / React ---
+node_modules/
+frontend-mobile/node_modules/
+.expo/
+frontend-mobile/.expo/
+dist/
+web-build/
+
+# --- Native / Debug / Secrets ---
+/ios
+/android
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+
+.expo-shared/
+.local/
