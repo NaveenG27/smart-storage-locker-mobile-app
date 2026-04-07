@@ -98,17 +98,27 @@ export default function Dashboard() {
   const openReserveModal = (locker: any) => {
     setActiveLocker(locker);
     const now = new Date();
-    now.setHours(now.getHours() + 1);
-    setReservedUntil(now.toISOString().slice(0, 16)); 
+    now.setHours(now.getHours() + 2); 
+    const localISO = now.toLocaleString('sv-SE').replace(' ', 'T').slice(0, 16);
+    setReservedUntil(localISO); 
     setShowReserveModal(true);
   };
 
   const confirmBooking = async () => {
     if (!activeLocker || !reservedUntil) return;
+    
     try {
+      // 1. Create the date object from the input string
+      const selectedDate = new Date(reservedUntil);
+
+      // 2. Check if the date is actually valid
+      if (isNaN(selectedDate.getTime())) {
+        return Alert.alert("Error", "Invalid date format. Use YYYY-MM-DDTHH:mm");
+      }
+
       const payload = { 
         locker: activeLocker.id,
-        reserved_until: new Date(reservedUntil).toISOString()
+        reserved_until: selectedDate.toISOString() 
       };
 
       await api.post('/api/reservations/', payload);
@@ -117,7 +127,10 @@ export default function Dashboard() {
       Alert.alert("Success", `Locker #${activeLocker.locker_number} reserved! 🔒`);
       fetchData();
     } catch (e: any) {
-      const serverError = e.response?.data?.error || JSON.stringify(e.response?.data);
+      const serverError = e.response?.data?.reserved_until 
+        ? e.response.data.reserved_until[0] 
+        : "Something went wrong";
+      
       Alert.alert("Reservation Failed", serverError);
     }
   };
