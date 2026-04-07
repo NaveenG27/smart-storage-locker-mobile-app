@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  baseURL: 'http://192.168.29.222:8000',
+  baseURL: 'https://smart-storage-locker-mobile-app.onrender.com',
 });
 
 api.interceptors.request.use(async (config) => {

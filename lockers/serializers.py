@@ -36,7 +36,12 @@ class ReservationSerializer(serializers.ModelSerializer):
     def validate_reserved_until(self, value):
         """
         Check that the reservation end time is in the future.
+        We add a 10-minute buffer to account for time-zone 
+        differences between the mobile app and the server.
         """
-        if value and value < timezone.now():
+        from datetime import timedelta
+        
+        # Allow a 10-minute grace period
+        if value and value < (timezone.now() - timedelta(minutes=10)):
             raise serializers.ValidationError("Reservation end time cannot be in the past.")
         return value
