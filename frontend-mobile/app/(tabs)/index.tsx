@@ -80,12 +80,23 @@ export default function Dashboard() {
 
   const handleAddLocker = async () => {
   if (!newLockerNum || !newLockerLoc) return Alert.alert("Error", "Fill all fields");
+  
   try {
     await api.post('/api/lockers/', { 
       locker_number: newLockerNum, 
       location: newLockerLoc,
       status: 'available' 
     });
+
+    Alert.alert("Success", `Locker #${newLockerNum} created successfully!`);
+
+    setNewLockerNum("");
+    setNewLockerLoc("");
+
+    setShowAddModal(false);
+
+    fetchData();
+
   } catch (e: any) { 
     if (e.response?.status === 400) {
       Alert.alert("Locker Exists", "This locker number is already in the system.");
