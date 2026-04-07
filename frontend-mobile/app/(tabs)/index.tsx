@@ -317,33 +317,35 @@ export default function Dashboard() {
 
       {/* --- MODALS --- */}
       <Modal visible={showAddModal} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Add New Locker</Text>
-                <TextInput 
-                    style={styles.modalInput} 
-                    placeholder="Locker Number" 
-                    value={newLockerNum} 
-                    onChangeText={setNewLockerNum}
-                    keyboardType="numeric"
-                />
-                <TextInput 
-                    style={styles.modalInput} 
-                    placeholder="Location" 
-                    value={newLockerLoc} 
-                    onChangeText={setNewLockerLoc}
-                />
-                <View style={styles.modalButtons}>
-                    <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowAddModal(false)}>
-                        <Text style={styles.cancelBtnText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.createBtn} onPress={handleAddLocker}>
-                        <Text style={styles.createBtnText}>Create</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
-      </Modal>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Add New Locker</Text>
+      <TextInput 
+        style={styles.modalInput} 
+        placeholder="Locker Number" 
+        placeholderTextColor="#94a3b8" 
+        value={newLockerNum} 
+        onChangeText={setNewLockerNum}
+        keyboardType="numeric"
+      />
+      <TextInput 
+        style={styles.modalInput} 
+        placeholder="Location" 
+        placeholderTextColor="#94a3b8" 
+        value={newLockerLoc} 
+        onChangeText={setNewLockerLoc}
+      />
+      <View style={styles.modalButtons}>
+        <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowAddModal(false)}>
+          <Text style={styles.cancelBtnText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.createBtn} onPress={handleAddLocker}>
+          <Text style={styles.createBtnText}>Create</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
 
       <Modal visible={showReserveModal} transparent animationType="slide">
         <View style={styles.modalOverlay}>
