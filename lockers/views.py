@@ -19,11 +19,15 @@ load_dotenv()
 # --- 2. FIREBASE INITIALIZATION ---
 try:
     if not firebase_admin._apps:
+        # Robust handling for Private Key newlines in cloud environments
+        raw_key = os.getenv("FIREBASE_PRIVATE_KEY", "")
+        private_key = raw_key.replace('\\n', '\n') if '\\n' in raw_key else raw_key
+        
         firebase_config = {
-            "type": os.getenv("FIREBASE_TYPE"),
+            "type": os.getenv("FIREBASE_TYPE", "service_account"),
             "project_id": os.getenv("FIREBASE_PROJECT_ID"),
             "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-            "private_key": os.getenv("FIREBASE_PRIVATE_KEY", "").replace('\\n', '\n'),
+            "private_key": private_key,
             "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
             "token_uri": "https://oauth2.googleapis.com/token",
         }
@@ -78,11 +82,11 @@ class LockerViewSet(viewsets.ModelViewSet):
     serializer_class = LockerSerializer
 
     def get_permissions(self):
-        # Fix: Allow anyone to view lockers to stop the 401 error
+        # Allow anyone to view lockers; helps mobile app load initial data without token
         if self.action in ['list', 'retrieve']:
             return [permissions.AllowAny()]
         
-        # Admin-only for editing
+        # Admin-only for structural changes
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [permissions.IsAdminUser()]
             
@@ -102,10 +106,14 @@ class ReservationViewSet(viewsets.ModelViewSet):
         if locker.status != 'available':
             raise ValidationError({'error': 'Locker is already occupied'})
         
+        # Save reservation first
+        serializer.save(user=self.request.user)
+        
+        # Then update locker status
         locker.status = 'occupied'
         locker.save()
         
-        serializer.save(user=self.request.user)
+        # Notify Firebase
         trigger_realtime_sync()
 
     @action(detail=True, methods=['put'])
@@ -119,6 +127,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
         if not reservation.is_active:
             return Response({'error': 'Reservation is already inactive'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Update both status safely
         locker.status = 'available'
         locker.save()
         
