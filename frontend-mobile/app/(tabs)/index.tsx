@@ -361,6 +361,7 @@ export default function Dashboard() {
                     value={reservedUntil} 
                     onChangeText={setReservedUntil}
                     placeholder="YYYY-MM-DDTHH:mm"
+                    placeholderTextColor="#94a3b8"
                 />
                 <Text style={{fontSize: 10, color: '#94a3b8', marginBottom: 15}}>Example: 2026-04-06T18:30</Text>
 
